@@ -1,0 +1,2 @@
+nssm install Caddy "%LOCALAPPDATA%\Microsoft\WinGet\Packages\CaddyServer.Caddy_Microsoft.Winget.Source_8wekyb3d8bbwe\caddy.exe" "run --config .\Caddyfile"
+nssm install FrontendApp "C:\Program Files\nodejs\npm.cmd" "run dev"

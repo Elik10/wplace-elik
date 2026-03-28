@@ -1,0 +1,24 @@
+http://localhost:8000, https://localhost:8080 {
+	tls internal
+
+	# New frontend
+	handle /beta* {
+		reverse_proxy {$FRONTEND_HOST:localhost}:{$FRONTEND_PORT:3001}
+	}
+	handle /login* {
+		@get method GET
+		reverse_proxy @get {$FRONTEND_HOST:localhost}:{$FRONTEND_PORT:3001}
+	}
+	handle /flags/* {
+		reverse_proxy {$FRONTEND_HOST:localhost}:{$FRONTEND_PORT:3001}
+	}
+	handle /_nuxt/* {
+		reverse_proxy {$FRONTEND_HOST:localhost}:{$FRONTEND_PORT:3001}
+	}
+	handle /__nuxt_devtools__/* {
+		reverse_proxy {$FRONTEND_HOST:localhost}:{$FRONTEND_PORT:3001}
+	}
+
+	# Backend API
+	reverse_proxy {$BACKEND_HOST:localhost}:{$BACKEND_PORT:3000}
+}

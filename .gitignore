@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.eslintcache
+.pnpm-store/
+*.db
+*.log
+*.pid
+dist/
+mariadb_data/
+mariadb_data_codex/
+node_modules/
+.vscode/

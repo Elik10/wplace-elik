@@ -1,0 +1,69 @@
+:root {
+	--bs-body-bg: #f9f4f0;
+	--bs-body-font-family: "Mona Sans Variable", -apple-system, system-ui, sans-serif;
+}
+
+:root.app-dark {
+	--bs-body-bg: #38435c;
+}
+
+@layer overrides {
+	:root {
+		--p-backdrop-filter: blur(10px);
+		--p-content-background: #fffe;
+		--p-card-background: var(--p-content-background);
+		--p-menu-background: var(--p-content-background);
+		--p-toast-blur: 10px;
+		--p-toast-error-background: var(--p-content-background);
+		--p-toast-warn-background: var(--p-content-background);
+		--p-toast-success-background: var(--p-content-background);
+		--p-toast-info-background: var(--p-content-background);
+		--p-tooltip-padding: 0.25rem;
+	}
+
+	:root.app-dark {
+		--p-content-background: #18181bee;
+	}
+
+	// Blur background
+	.p-card,
+	.p-menu {
+		backdrop-filter: var(--p-backdrop-filter);
+	}
+
+	body {
+		user-select: none;
+		cursor: default;
+	}
+
+	// Tooltip
+	.p-tooltip-text {
+		font-size: 0.8rem;
+	}
+}
+
+body {
+	user-select: none;
+	cursor: default;
+}
+
+a {
+	// Workaround for Firefox making link underlines super thick
+	text-decoration-thickness: 1px;
+}
+
+// Blue Marble fixes
+#bm-A {
+	p,
+	hr,
+	h1 {
+		margin: 0;
+	}
+
+	input,
+	button,
+	textarea {
+		border: none;
+		color: inherit;
+	}
+}
