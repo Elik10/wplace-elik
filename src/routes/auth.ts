@@ -293,7 +293,6 @@ export default function (app: App) {
 			});
 
 			if (recentToken) {
-				const waitTime = Math.ceil((recentToken.createdAt.getTime() + 10 * 60 * 1000 - Date.now()) / 1000);
 				return res.status(429)
 					.json({ error: "You already requested a password reset recently. Please wait before sending another one." });
 			}

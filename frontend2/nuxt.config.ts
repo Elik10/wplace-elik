@@ -2,6 +2,8 @@
 import { definePreset } from "@primeuix/themes";
 import Aura from "@primeuix/themes/aura";
 
+const isProduction = process.env["NODE_ENV"] === "production";
+
 const theme = definePreset(Aura, {
 	primitive: {
 		blue: {
@@ -40,7 +42,12 @@ export default defineNuxtConfig({
 	compatibilityDate: "2025-07-15",
 
 	devtools: {
-		enabled: true
+		enabled: !isProduction
+	},
+
+	sourcemap: {
+		client: false,
+		server: false
 	},
 
 	app: {
@@ -143,9 +150,22 @@ export default defineNuxtConfig({
 	},
 
 	modules: [
-		"@nuxt/eslint",
+		...(!isProduction
+			? ["@nuxt/eslint"]
+			: []),
 		"@primevue/nuxt-module"
 	],
+
+	typescript: {
+		typeCheck: false
+	},
+
+	vite: {
+		build: {
+			reportCompressedSize: false,
+			chunkSizeWarningLimit: 1500
+		}
+	},
 
 	primevue: {
 		components: {

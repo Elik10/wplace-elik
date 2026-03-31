@@ -52,6 +52,8 @@ model User {
   reportedNotes          UserNote[]             @relation("UserNoteReportedUser")
   regionStats            UserRegionStats[]
   regionStatsDaily       UserRegionStatsDaily[]
+  chatMessages           ChatMessage[]
+  allianceJoinRequests   AllianceJoinRequest[]   @relation("AllianceJoinRequestUser")
   notifications          Notification[]         @relation("NotificationUser")
   sentNotifications      Notification[]         @relation("NotificationSendingUser")
   createdAt              DateTime               @default(now())
@@ -67,13 +69,23 @@ model User {
 model Alliance {
   id            Int              @id @default(autoincrement())
   name          String           @unique
+  tag           String?          @unique @db.VarChar(8)
   description   String?
+  picture       String?          @db.Text
+  banner        String?          @db.Text
+  ownerId       Int?
+  joinPolicy    String           @default("invite")
+  announcement  String?          @db.VarChar(500)
+  announcementUpdatedAt DateTime?
+  rolePermissions Json?
   hqLatitude    Float?
   hqLongitude   Float?
   pixelsPainted Int              @default(0)
   members       User[]
   bannedUsers   BannedUser[]
   invites       AllianceInvite[]
+  joinRequests  AllianceJoinRequest[]
+  activityLogs  AllianceActivityLog[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
@@ -95,6 +107,39 @@ model AllianceInvite {
   allianceId Int
   alliance   Alliance @relation(fields: [allianceId], references: [id])
   createdAt  DateTime @default(now())
+}
+
+model AllianceJoinRequest {
+  id           Int      @id @default(autoincrement())
+  allianceId   Int
+  alliance     Alliance @relation(fields: [allianceId], references: [id])
+  userId       Int
+  user         User     @relation("AllianceJoinRequestUser", fields: [userId], references: [id])
+  message      String?  @db.VarChar(280)
+  status       String   @default("pending")
+  reviewedById Int?
+  reviewedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([allianceId, userId])
+  @@index([allianceId, status, createdAt])
+  @@index([userId, status])
+}
+
+model AllianceActivityLog {
+  id           Int      @id @default(autoincrement())
+  allianceId   Int
+  alliance     Alliance @relation(fields: [allianceId], references: [id])
+  actorUserId  Int?
+  targetUserId Int?
+  type         String
+  message      String   @db.Text
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([allianceId, createdAt])
+  @@index([allianceId, type, createdAt])
 }
 
 model FavoriteLocation {
@@ -277,6 +322,24 @@ model UserRegionStatsDaily {
   @@index([regionCityId, date, pixelsPainted, userId])
   @@index([regionCityId, date, pixelsPainted, allianceId])
   @@index([regionCountryId, date, pixelsPainted])
+}
+
+model ChatMessage {
+  id        Int          @id @default(autoincrement())
+  userId    Int
+  user      User         @relation(fields: [userId], references: [id])
+  content   String       @db.VarChar(280)
+  channel   String       @default("global") @db.VarChar(20)
+  allianceId Int?
+  replyToId Int?
+  replyTo   ChatMessage? @relation("ChatReplies", fields: [replyToId], references: [id])
+  replies   ChatMessage[] @relation("ChatReplies")
+  createdAt DateTime     @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([channel, allianceId, createdAt])
+  @@index([replyToId])
 }
 
 model Notification {

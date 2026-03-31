@@ -12,6 +12,7 @@ import alliance from "./routes/alliance.js";
 import auth from "./routes/auth.js";
 import autocomplete from "./routes/autocomplete.js";
 import challenge from "./routes/challenge.js";
+import chat from "./routes/chat.js";
 import checkrobots from "./routes/checkrobots.js";
 import discord from "./routes/discord.js";
 import favoriteLocation from "./routes/favorite-location.js";
@@ -30,6 +31,11 @@ import { discordBot } from "./discord/bot.js";
 const isDev = process.env["NODE_ENV"] !== "production";
 
 const noMatchPage = await fs.readFile("./frontend/404.html", "utf8");
+const indexPage = await fs.readFile("./frontend/index.html", "utf8");
+
+function isCoordinatePath(pathname: string): boolean {
+	return /^\/-?\d+,-?\d+,-?\d+(?:\.\d+)?\/?$/.test(pathname);
+}
 
 const app = new App({
 	settings: {
@@ -38,6 +44,12 @@ const app = new App({
 	},
 
 	noMatchHandler: async (_req, res) => {
+		if (isCoordinatePath(_req.path)) {
+			return res.status(200)
+				.set("Content-Type", "text/html")
+				.send(indexPage);
+		}
+
 		return res.status(404)
 			.set("Content-Type", "text/html")
 			.send(noMatchPage);
@@ -134,6 +146,7 @@ alliance(app);
 auth(app);
 autocomplete(app);
 challenge(app);
+chat(app);
 checkrobots(app);
 discord(app);
 favoriteLocation(app);

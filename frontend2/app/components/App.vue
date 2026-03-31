@@ -140,6 +140,13 @@
 				</MapButton>
 
 				<MapButton
+					v-tooltip.left="'Chat'"
+					@click="isChatOpen = true"
+				>
+					<ChatIcon />
+				</MapButton>
+
+				<MapButton
 					v-tooltip.left="'Leaderboard'"
 					@click="isLeaderboardOpen = true"
 				>
@@ -253,6 +260,15 @@
 			@close="isNotificationsOpen = false"
 			@count-updated="handleNotificationCountUpdated"
 		/>
+
+		<ChatDialog
+			:is-open="isChatOpen"
+			:is-logged-in="isLoggedIn"
+			:current-user-id="userProfile?.id ?? null"
+			@close="isChatOpen = false"
+			@login="handleLogIn"
+			@register="handleRegister"
+		/>
 	</div>
 </template>
 
@@ -268,6 +284,7 @@ import UserMenu from "~/components/UserMenu.vue";
 import PixelInfo from "~/components/PixelInfo.vue";
 import MeasureInfo from "~/components/MeasureInfo.vue";
 import NotificationDialog from "~/components/NotificationDialog.vue";
+import ChatDialog from "~/components/ChatDialog.vue";
 import StoreDialog, { StoreTab } from "~/components/StoreDialog.vue";
 import LeaderboardDialog from "~/components/LeaderboardDialog.vue";
 import { CLOSE_ZOOM_LEVEL, getPixelId, type LngLat, lngLatToTileCoords, type TileCoords, tileCoordsToLngLat, WIDE_ZOOM_LEVEL, ZOOM_LEVEL } from "~/utils/coordinates";
@@ -282,6 +299,7 @@ import { useViewport } from "~/composables/useViewport";
 import SearchBox from "~/components/SearchBox.vue";
 import { DEFAULT_LOCATIONS } from "~/utils/default-locations";
 import CompassIcon from "~/components/icons/CompassIcon.vue";
+import ChatIcon from "~/components/icons/ChatIcon.vue";
 import ExploreIcon from "~/components/icons/ExploreIcon.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import MapSatelliteIcon from "~/components/icons/MapSatelliteIcon.vue";
@@ -306,6 +324,7 @@ const isSatellite = ref(false);
 const isUserMenuOpen = ref(false);
 const isPixelInfoOpen = ref(false);
 const isNotificationsOpen = ref(false);
+const isChatOpen = ref(false);
 const isAboutOpen = ref(false);
 const isStoreOpen = ref(false);
 const isLeaderboardOpen = ref(false);
@@ -621,6 +640,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 		isLeaderboardOpen.value = false;
 		isAboutOpen.value = false;
 		isNotificationsOpen.value = false;
+		isChatOpen.value = false;
 		isMeasureInfoOpen.value = false;
 		isMeasureInfoOpen.value = false;
 		cancelMeasure();
@@ -757,6 +777,10 @@ const handlePaintButtonClick = () => {
 
 const handleLogIn = () => {
 	logIn();
+};
+
+const handleRegister = () => {
+	location.href = "/login/register";
 };
 
 const handleLogOut = async () => {

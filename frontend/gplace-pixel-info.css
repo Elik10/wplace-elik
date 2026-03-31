@@ -1,0 +1,442 @@
+.gpi-enhanced {
+	border-color: rgba(43, 59, 89, 0.12) !important;
+	border-radius: 22px 22px 0 0;
+	box-shadow: 0 18px 48px rgba(15, 23, 42, 0.16);
+	background: rgba(255, 255, 255, 0.98) !important;
+	backdrop-filter: blur(10px);
+}
+
+.gpi-enhanced > div:first-child {
+	padding-top: 6px;
+}
+
+.gpi-enhanced .gpi-shell {
+	display: grid;
+	gap: 12px;
+	padding: 8px 12px 2px;
+}
+
+.gpi-enhanced .gpi-summary {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 12px;
+	align-items: start;
+	border: 1px solid rgba(207, 216, 228, 0.9);
+	border-radius: 18px;
+	padding: 12px;
+	background:
+		linear-gradient(180deg, rgba(249, 250, 252, 0.98) 0%, rgba(243, 246, 250, 0.96) 100%);
+}
+
+.gpi-enhanced .gpi-summary.gpi-empty {
+	background:
+		radial-gradient(circle at top left, rgba(164, 180, 255, 0.16), transparent 48%),
+		linear-gradient(180deg, rgba(249, 250, 252, 0.98) 0%, rgba(243, 246, 250, 0.96) 100%);
+}
+
+.gpi-enhanced .gpi-avatar {
+	display: grid;
+	place-items: center;
+	width: 52px;
+	height: 52px;
+	border-radius: 16px;
+	overflow: hidden;
+	background: #eaf0ff;
+	color: #1f3d72;
+	font: 800 18px/1 "Mona Sans Variable", system-ui, sans-serif;
+}
+
+.gpi-enhanced .gpi-avatar-button {
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+.gpi-enhanced .gpi-avatar img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.gpi-enhanced .gpi-body {
+	display: grid;
+	gap: 6px;
+	min-width: 0;
+}
+
+.gpi-enhanced .gpi-topline {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.gpi-enhanced .gpi-title {
+	margin: 0;
+	font-size: 17px;
+	font-weight: 800;
+	line-height: 1.1;
+	color: #1c2e4b;
+}
+
+.gpi-enhanced .gpi-name-button {
+	border: 0;
+	padding: 0;
+	background: none;
+	color: #1c2e4b;
+	font: 800 17px/1.1 "Mona Sans Variable", system-ui, sans-serif;
+	cursor: pointer;
+	text-align: left;
+}
+
+.gpi-enhanced .gpi-name-button:hover {
+	color: #274872;
+}
+
+.gpi-enhanced .gpi-inline-player {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	color: #425a7f;
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.gpi-enhanced .gpi-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 28px;
+	padding: 0 10px;
+	border: 1px solid rgba(182, 195, 214, 0.95);
+	border-radius: 999px;
+	background: #fff;
+	color: #425a7f;
+	font-size: 12px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.gpi-enhanced .gpi-badge.gpi-badge--alliance {
+	background: rgba(28, 46, 75, 0.92);
+	border-color: rgba(28, 46, 75, 0.92);
+	color: #fff;
+}
+
+.gpi-enhanced .gpi-copy {
+	margin-left: auto;
+}
+
+.gpi-enhanced .gpi-copy button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 28px;
+	padding: 0 12px;
+	border: 0;
+	border-radius: 999px;
+	background: rgba(31, 41, 55, 0.08);
+	color: #233554;
+	font: 700 12px/1 "Mona Sans Variable", system-ui, sans-serif;
+	cursor: pointer;
+	transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.gpi-enhanced .gpi-copy button:hover {
+	background: rgba(31, 41, 55, 0.14);
+	transform: translateY(-1px);
+}
+
+.gpi-enhanced .gpi-copy button[data-copied="true"] {
+	background: #223a5f;
+	color: #fff;
+}
+
+.gpi-enhanced .gpi-subtitle,
+.gpi-enhanced .gpi-path {
+	margin: 0;
+	color: #62718a;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.gpi-enhanced .gpi-path {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	color: #334155;
+}
+
+.gpi-enhanced .gpi-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.gpi-enhanced .gpi-pill-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 28px;
+	padding: 0 12px;
+	border: 1px solid rgba(182, 195, 214, 0.95);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.98);
+	color: #334e73;
+	font: 700 12px/1 "Mona Sans Variable", system-ui, sans-serif;
+	cursor: pointer;
+}
+
+.gpi-enhanced .gpi-pill-action:hover {
+	background: rgba(241, 245, 249, 0.98);
+}
+
+.gpi-enhanced .gpi-meta .gpi-badge {
+	padding-inline: 12px;
+}
+
+.gpi-enhanced .gpi-region-chip {
+	border-color: rgba(204, 213, 224, 0.95);
+	background: #fff7f8;
+	color: #b42339;
+}
+
+.gpi-enhanced .gpi-region-chip .font-flag {
+	font-size: 14px;
+}
+
+.gpi-enhanced .gpi-actions {
+	display: flex !important;
+	flex-wrap: wrap;
+	gap: 8px !important;
+	padding-top: 10px !important;
+}
+
+.gpi-enhanced .gpi-actions .btn {
+	flex: 0 0 auto;
+}
+
+.gpi-enhanced .gpi-copy-action {
+	border: 1px solid rgba(182, 195, 214, 0.95);
+	border-radius: 999px;
+	padding: 0 14px;
+	background: rgba(255, 255, 255, 0.96);
+	color: #223554;
+	font: 700 13px/1 "Mona Sans Variable", system-ui, sans-serif;
+}
+
+.gpi-enhanced .gpi-copy-action:hover {
+	background: rgba(241, 245, 249, 0.96);
+}
+
+.gpi-enhanced .gpi-copy-action[data-copied="true"] {
+	background: #223a5f;
+	border-color: #223a5f;
+	color: #fff;
+}
+
+.gpi-profile-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 1200;
+	display: grid;
+	place-items: center;
+	padding: 20px;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 180ms ease;
+}
+
+.gpi-profile-modal.is-open {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.gpi-profile-backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(15, 23, 42, 0.34);
+	backdrop-filter: blur(8px);
+}
+
+.gpi-profile-dialog {
+	position: relative;
+	width: min(460px, calc(100vw - 28px));
+	border: 1px solid rgba(205, 214, 227, 0.96);
+	border-radius: 24px;
+	background: rgba(255, 255, 255, 0.98);
+	box-shadow: 0 26px 80px rgba(15, 23, 42, 0.26);
+	padding: 22px;
+}
+
+.gpi-profile-close {
+	position: absolute;
+	top: 14px;
+	right: 14px;
+	width: 36px;
+	height: 36px;
+	border: 0;
+	border-radius: 999px;
+	background: rgba(31, 41, 55, 0.08);
+	color: #243854;
+	font-size: 22px;
+	cursor: pointer;
+}
+
+.gpi-profile-close:hover {
+	background: rgba(31, 41, 55, 0.14);
+}
+
+.gpi-profile-content {
+	display: grid;
+	gap: 16px;
+}
+
+.gpi-profile-header {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 14px;
+	align-items: center;
+}
+
+.gpi-profile-avatar {
+	width: 72px;
+	height: 72px;
+	border-radius: 22px;
+	overflow: hidden;
+	background: #eaf0ff;
+}
+
+.gpi-profile-avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.gpi-profile-main {
+	display: grid;
+	gap: 6px;
+}
+
+.gpi-profile-kicker,
+.gpi-profile-note,
+.gpi-profile-last-label,
+.gpi-profile-last-time,
+.gpi-profile-last-path,
+.gpi-profile-loading p {
+	margin: 0;
+}
+
+.gpi-profile-kicker {
+	color: #6a7a92;
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.gpi-profile-main h3 {
+	margin: 0;
+	color: #1b2f4f;
+	font-size: 26px;
+	line-height: 1.05;
+}
+
+.gpi-profile-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.gpi-profile-stats {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.gpi-profile-stat,
+.gpi-profile-last {
+	border: 1px solid rgba(208, 216, 228, 0.96);
+	border-radius: 18px;
+	background: linear-gradient(180deg, rgba(249, 250, 252, 0.98) 0%, rgba(243, 246, 250, 0.96) 100%);
+}
+
+.gpi-profile-stat {
+	display: grid;
+	gap: 6px;
+	padding: 14px;
+}
+
+.gpi-profile-stat span,
+.gpi-profile-last-label {
+	color: #6a7a92;
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.gpi-profile-stat strong,
+.gpi-profile-last-time {
+	color: #1c2e4b;
+	font-size: 22px;
+	font-weight: 800;
+}
+
+.gpi-profile-note {
+	color: #62718a;
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.gpi-profile-last {
+	display: grid;
+	gap: 14px;
+	padding: 16px;
+}
+
+.gpi-profile-last-copy {
+	display: grid;
+	gap: 6px;
+}
+
+.gpi-profile-last-path {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	color: #334155;
+	font-size: 13px;
+}
+
+.gpi-profile-last-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.gpi-profile-last-actions button {
+	min-height: 36px;
+	padding: 0 14px;
+	border: 1px solid rgba(182, 195, 214, 0.95);
+	border-radius: 999px;
+	background: #fff;
+	color: #243854;
+	font: 700 13px/1 "Mona Sans Variable", system-ui, sans-serif;
+	cursor: pointer;
+}
+
+.gpi-profile-last-actions button:hover {
+	background: rgba(241, 245, 249, 0.98);
+}
+
+@media (max-width: 640px) {
+	.gpi-enhanced .gpi-summary {
+		grid-template-columns: 1fr;
+	}
+
+	.gpi-enhanced .gpi-copy {
+		margin-left: 0;
+	}
+
+	.gpi-profile-header,
+	.gpi-profile-stats {
+		grid-template-columns: 1fr;
+	}
+}

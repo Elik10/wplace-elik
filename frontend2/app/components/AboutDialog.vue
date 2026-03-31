@@ -22,12 +22,9 @@
 		<div>
 			<div class="about-logo">
 				<img
-					src="/img/logo-512x512.png"
-					alt=""
-					width="64"
-					height="64"
+					src="/img/gplace-banner.png"
+					alt="gplace"
 				>
-				<span>gplace</span>
 			</div>
 
 			<div class="section">
@@ -55,7 +52,7 @@
 			</div>
 
 			<p class="muted">
-				gplace is developed by <a href="https://github.com/openplaceteam/openplace/contributors" target="_blank">open source contributors</a>. It uses maps hosted by <a href="https://openfreemap.org/" target="_blank">OpenFreeMap</a>.
+				gplace is developed in <a href="https://github.com/Elik10/wplace-elik" target="_blank">the gplace repository</a>. It uses maps hosted by <a href="https://openfreemap.org/" target="_blank">OpenFreeMap</a>.
 			</p>
 
 			<p class="muted">
@@ -94,35 +91,15 @@ const handleClose = () => {
 <style scoped>
 .about-logo {
 	display: flex;
-	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	gap: 1rem;
 	margin: 0 0 3.5rem 0;
-	font: 400 2.25rem/1 "Pixelify Sans Variable", var(--bs-body-font-family);
-}
-
-@media (min-width: 375px) {
-	.about-logo {
-		font-size: 2.5rem;
-	}
-}
-
-@media (min-width: 390px) {
-	.about-logo {
-		font-size: 3rem;
-	}
-}
-
-@media (min-width: 500px) {
-	.about-logo {
-		font-size: 3.5rem;
-	}
 }
 
 .about-logo img {
-	width: auto;
-	height: 1.15em;
+	width: min(100%, 21rem);
+	height: auto;
+	image-rendering: pixelated;
 }
 
 .section {

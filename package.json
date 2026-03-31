@@ -6,7 +6,8 @@
 	"scripts": {
 		"exec": "concurrently \"caddy run --config ./Caddyfile\" \"npm run dev\"",
 		"dev": "tsx watch src",
-		"build": "tsc",
+		"build": "tsc -p tsconfig.build.json",
+		"build:full": "tsc -p tsconfig.json",
 		"start": "node dist",
 		"prepare": "husky",
 		"setup": "tsx scripts/setup.ts",
@@ -29,6 +30,7 @@
 		"bcryptjs": "^3.0.3",
 		"chalk": "^5.6.2",
 		"cidr-tools": "^11.0.10",
+		"country-coder": "^2.1.0",
 		"discord.js": "^14.25.1",
 		"dotenv": "^17.3.1",
 		"inquirer": "^13.3.0",

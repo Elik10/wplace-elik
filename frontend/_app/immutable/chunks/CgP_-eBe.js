@@ -96,8 +96,8 @@ const he = (a) => `Login with ${a.name}`,
   De = () => "Privacy Policy",
   Fe = () => "Política de privacidade",
   Pe = (a = {}, e = {}) => ((e.locale ?? h()) === "en" ? De() : Fe()),
-  Se = () => "Do you have a Wplace Twitch account?",
-  Ne = () => "Você tem uma conta Wplace associada à Twitch?",
+  Se = () => "Do you have a gplace Twitch account?",
+  Ne = () => "Você tem uma conta gplace associada à Twitch?",
   ze = (a = {}, e = {}) => ((e.locale ?? h()) === "en" ? Se() : Ne()),
   Ke = () => "Migrate your account",
   Re = () => "Migre sua conta",
@@ -262,7 +262,7 @@ function ct(a, e) {
     <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:16px 8px 8px;">
       <div style="text-align:center;">
         <div style="font-size:40px;line-height:1;font-weight:800;color:#4169e1;letter-spacing:0.03em;">gplace</div>
-        <p style="margin:10px 0 0;color:rgba(30,41,59,.68);font-size:14px;">Create an account or sign in without leaving the map.</p>
+        <p data-auth-subtitle style="margin:10px 0 0;color:rgba(30,41,59,.68);font-size:14px;">Create an account</p>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;max-width:420px;padding:6px;border-radius:18px;background:rgba(65,105,225,.08);">
         <button type="button" data-auth-tab="register" style="border:0;border-radius:14px;padding:12px 14px;background:#4169e1;color:#fff;font:inherit;font-weight:700;cursor:pointer;">Register</button>
@@ -298,7 +298,8 @@ function ct(a, e) {
   const r = n.firstElementChild;
   const y = r.querySelectorAll("[data-auth-tab]");
   const m = r.querySelectorAll("[data-auth-form]");
-  function _(c) {
+  const _ = r.querySelector("[data-auth-subtitle]");
+  function U(c) {
     y.forEach((i) => {
       const v = i.getAttribute("data-auth-tab") === c;
       i.style.background = v ? "#4169e1" : "transparent";
@@ -311,8 +312,9 @@ function ct(a, e) {
         const b = i.querySelector("[data-auth-error]");
         b && (b.textContent = "");
       });
+    _ && (_.textContent = c === "login" ? "login to your account" : "Create an account");
   }
-  function U(c, i) {
+  function C(c, i) {
     const v = i.querySelector('input[name="username"]'),
       b = i.querySelector('input[name="password"]'),
       M = i.querySelector("[data-auth-error]"),
@@ -351,14 +353,14 @@ function ct(a, e) {
             }));
   }
   y.forEach((c) => {
-    c.addEventListener("click", () => _(c.getAttribute("data-auth-tab") || "register"));
+    c.addEventListener("click", () => U(c.getAttribute("data-auth-tab") || "register"));
   }),
     m.forEach((c) => {
       c.addEventListener("submit", (i) => {
-        i.preventDefault(), U(c.getAttribute("data-auth-form") || "register", c);
+        i.preventDefault(), C(c.getAttribute("data-auth-form") || "register", c);
       });
     }),
-    _("register"),
+    U("register"),
     I(a, r),
     Z();
 }

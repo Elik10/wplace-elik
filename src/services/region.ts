@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import { iso1A2Code } from "country-coder";
 import { TILE_SIZE } from "./pixel";
+import { COUNTRIES } from "../utils/country.js";
 
 export interface Region {
 	id: number;
@@ -20,11 +22,21 @@ interface Point {
 	countryId: number;
 }
 
+interface ReverseLocalityResult {
+	countryId: number | null;
+	name: string | null;
+}
+
+const countryIdsByCode = new Map(COUNTRIES.map((country) => [country.code.toUpperCase(), country.id]));
 export class RegionService {
 	constructor(private prisma: PrismaClient) {}
 
 	private cache = new Map<string, Region>();
 	private inflight = new Map<string, Promise<Region>>();
+	private reverseCountryCache = new Map<string, number | null>();
+	private reverseCountryInflight = new Map<string, Promise<number | null>>();
+	private reverseLocalityCache = new Map<string, ReverseLocalityResult>();
+	private reverseLocalityInflight = new Map<string, Promise<ReverseLocalityResult>>();
 	private static indexLoaded = false;
 	private static indexLoadingPromise: Promise<void> | null = null;
 	private static binSizeDeg = 1;
@@ -41,6 +53,16 @@ export class RegionService {
 	private staticKey(lat: number, lon: number): string {
 		const rLat = Math.round(lat * 10_000) / 10_000;
 		const rLon = Math.round(lon * 10_000) / 10_000;
+		return `${rLat}:${rLon}`;
+	}
+	private countryLookupKey(lat: number, lon: number): string {
+		const rLat = Math.round(lat * 1000) / 1000;
+		const rLon = Math.round(lon * 1000) / 1000;
+		return `${rLat}:${rLon}`;
+	}
+	private localityLookupKey(lat: number, lon: number): string {
+		const rLat = Math.round(lat * 100) / 100;
+		const rLon = Math.round(lon * 100) / 100;
 		return `${rLat}:${rLon}`;
 	}
 	private static binKey(lat: number, lon: number): string {
@@ -197,13 +219,16 @@ export class RegionService {
 				return result;
 			}
 
+			const fallback = await this.getLocalityForCoordinates(latitude, longitude);
+			const countryId = fallback.countryId ?? await this.getCountryIdForCoordinates(latitude, longitude) ?? 13;
+
 			return {
 				id: 0,
 				cityId: 0,
-				name: "openplace",
-				number: 1,
-				countryId: 13,
-				flagId: 13
+				name: fallback.name ?? "gplace",
+				number: 0,
+				countryId,
+				flagId: countryId
 			};
 		})();
 
@@ -270,6 +295,167 @@ export class RegionService {
 			radius += 1;
 		}
 		return null;
+	}
+
+	private async getCountryIdForCoordinates(latitude: number, longitude: number): Promise<number | null> {
+		const key = this.countryLookupKey(latitude, longitude);
+		if (this.reverseCountryCache.has(key)) {
+			return this.reverseCountryCache.get(key) ?? null;
+		}
+
+		const inflight = this.reverseCountryInflight.get(key);
+		if (inflight) {
+			return inflight;
+		}
+
+		const work = (async () => {
+			const countryCode = iso1A2Code([longitude, latitude]);
+			const countryId = countryCode ? countryIdsByCode.get(countryCode.toUpperCase()) ?? null : null;
+			this.reverseCountryCache.set(key, null);
+			if (countryId) {
+				this.reverseCountryCache.set(key, countryId);
+				return countryId;
+			}
+			return null;
+		})();
+
+		this.reverseCountryInflight.set(key, work);
+		try {
+			return await work;
+		} finally {
+			this.reverseCountryInflight.delete(key);
+		}
+	}
+
+	private normalizeLocalityName(value: unknown): string | null {
+		if (typeof value !== "string") {
+			return null;
+		}
+
+		const normalized = value
+			.replace(/\s+/g, " ")
+			.replace(/\s*,\s*/g, ", ")
+			.trim();
+		if (!normalized) {
+			return null;
+		}
+
+		const cleaned = normalized
+			.replace(/^city of\s+/i, "")
+			.replace(/^province of\s+/i, "")
+			.replace(/^district of\s+/i, "")
+			.trim();
+		return cleaned || null;
+	}
+
+	private pickLocalityName(payload: any): string | null {
+		const address = payload?.address;
+		const candidates = [
+			address?.city,
+			address?.town,
+			address?.village,
+			address?.municipality,
+			address?.city_district,
+			address?.suburb,
+			address?.county,
+			address?.state_district,
+			address?.province,
+			address?.state,
+			payload?.name
+		];
+
+		for (const candidate of candidates) {
+			const normalized = this.normalizeLocalityName(candidate);
+			if (normalized) {
+				return normalized;
+			}
+		}
+
+		const displayName = this.normalizeLocalityName(payload?.display_name);
+		if (!displayName) {
+			return null;
+		}
+
+		const firstPart = displayName.split(",")[0]?.trim();
+		return this.normalizeLocalityName(firstPart);
+	}
+
+	private async reverseLookupLocality(latitude: number, longitude: number): Promise<ReverseLocalityResult> {
+		const controller = new AbortController();
+		const timer = setTimeout(() => {
+			controller.abort();
+		}, 1800);
+
+		try {
+			const url = new URL("https://nominatim.openstreetmap.org/reverse");
+			url.searchParams.set("format", "jsonv2");
+			url.searchParams.set("lat", String(latitude));
+			url.searchParams.set("lon", String(longitude));
+			url.searchParams.set("zoom", "10");
+			url.searchParams.set("addressdetails", "1");
+			url.searchParams.set("accept-language", "en");
+
+			const response = await fetch(url, {
+				headers: {
+					accept: "application/json",
+					"user-agent": "gplace-local-dev/1.0 (+https://github.com/Elik10/wplace-elik)"
+				},
+				signal: controller.signal
+			});
+
+			if (!response.ok) {
+				return { countryId: null, name: null };
+			}
+
+			const payload: any = await response.json();
+			const countryCode = typeof payload?.address?.country_code === "string"
+				? payload.address.country_code.toUpperCase()
+				: null;
+			const countryId = countryCode ? countryIdsByCode.get(countryCode) ?? null : null;
+			const name = this.pickLocalityName(payload);
+
+			return { countryId, name };
+		} catch {
+			return { countryId: null, name: null };
+		} finally {
+			clearTimeout(timer);
+		}
+	}
+
+	private async getLocalityForCoordinates(latitude: number, longitude: number): Promise<ReverseLocalityResult> {
+		const key = this.localityLookupKey(latitude, longitude);
+		const cached = this.reverseLocalityCache.get(key);
+		if (cached) {
+			return cached;
+		}
+
+		const inflight = this.reverseLocalityInflight.get(key);
+		if (inflight) {
+			return inflight;
+		}
+
+		const work = (async () => {
+			const reverse = await this.reverseLookupLocality(latitude, longitude);
+			if (reverse.countryId || reverse.name) {
+				this.reverseLocalityCache.set(key, reverse);
+				return reverse;
+			}
+
+			const fallbackCountryId = await this.getCountryIdForCoordinates(latitude, longitude);
+			const fallback = {
+				countryId: fallbackCountryId,
+				name: null
+			};
+			this.reverseLocalityCache.set(key, fallback);
+			return fallback;
+		})();
+
+		this.reverseLocalityInflight.set(key, work);
+		try {
+			return await work;
+		} finally {
+			this.reverseLocalityInflight.delete(key);
+		}
 	}
 
 	public async findRegionsByQuery(query: string): Promise<Point[]> {

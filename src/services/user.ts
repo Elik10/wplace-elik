@@ -4,6 +4,7 @@ import { englishDataset, englishRecommendedTransformers, RegExpMatcher } from "o
 import { BanReason } from "../types/index.js";
 import { AuthService } from "./auth.js";
 import { ValidationError } from "../utils/error.js";
+import { COUNTRIES } from "../utils/country.js";
 
 export const COOLDOWN_MS = Number.parseInt(process.env["COOLDOWN_MS"] ?? "") || 30_000;
 export const ACTIVE_COOLDOWN_MS = Number.parseInt(process.env["ACTIVE_COOLDOWN_MS"] ?? "") || 15_000;
@@ -12,6 +13,7 @@ export const SPECIAL_COOLDOWN_MS = Number.parseInt(process.env["SPECIAL_COOLDOWN
 export const COOLDOWN_OVERRIDE_FOR_SPECIAL = (process.env["COOLDOWN_OVERRIDE_FOR_SPECIAL"] ?? "false") === "true";
 
 export const MAX_FAVORITE_LOCATIONS = 50;
+const DEFAULT_PROFILE_PICTURE = "/img/gplace-logo.png";
 
 export interface UpdateUserInput {
 	nickname?: string;
@@ -131,11 +133,114 @@ export class UserService {
 			isCustomer: user.isCustomer,
 			level: user.level,
 			needsPhoneVerification: user.needsPhoneVerification,
-			picture: user.picture ?? "",
+			picture: user.picture && user.picture.trim()
+				? user.picture
+				: DEFAULT_PROFILE_PICTURE,
 			pixelsPainted: user.pixelsPainted,
 			showLastPixel: user.showLastPixel,
 			allianceId: user.allianceId,
 			allianceRole: user.allianceRole
+		};
+	}
+
+	async getPublicProfile(userId: number) {
+		const user = await this.prisma.user.findUnique({
+			where: { id: userId },
+			select: {
+				id: true,
+				name: true,
+				nickname: true,
+				discord: true,
+				country: true,
+				banned: true,
+				verified: true,
+				pixelsPainted: true,
+				level: true,
+				showLastPixel: true,
+				picture: true,
+				allianceId: true,
+				allianceRole: true,
+				alliance: {
+					select: {
+						id: true,
+						name: true,
+						tag: true,
+						picture: true
+					}
+				}
+			}
+		});
+
+		if (!user) {
+			throw new Error("User not found");
+		}
+
+		const country = COUNTRIES.find((item) => item.code === user.country);
+		const lastPixel = user.showLastPixel
+			? await this.prisma.pixel.findFirst({
+				where: { paintedBy: userId },
+				orderBy: { paintedAt: "desc" },
+				select: {
+					tileX: true,
+					tileY: true,
+					x: true,
+					y: true,
+					paintedAt: true
+				}
+			})
+			: null;
+
+		if (user.banned) {
+			return {
+				id: user.id,
+				name: "Suspended Account",
+				picture: DEFAULT_PROFILE_PICTURE,
+				verified: false,
+				discord: "",
+				country: {
+					code: user.country,
+					name: country?.name ?? user.country
+				},
+				pixelsPainted: user.pixelsPainted,
+				level: Math.max(1, Math.round(user.level * 100) / 100),
+				alliance: null,
+				allianceRole: null,
+				lastPixel: null
+			};
+		}
+
+		return {
+			id: user.id,
+			name: user.nickname || user.name,
+			picture: user.picture && user.picture.trim()
+				? user.picture
+				: DEFAULT_PROFILE_PICTURE,
+			verified: user.verified,
+			discord: user.discord ?? "",
+			country: {
+				code: user.country,
+				name: country?.name ?? user.country
+			},
+			pixelsPainted: user.pixelsPainted,
+			level: Math.max(1, Math.round(user.level * 100) / 100),
+			alliance: user.alliance
+				? {
+					id: user.alliance.id,
+					name: user.alliance.name,
+					tag: user.alliance.tag,
+					picture: user.alliance.picture || DEFAULT_PROFILE_PICTURE
+				}
+				: null,
+			allianceRole: user.allianceId ? user.allianceRole : null,
+			lastPixel: lastPixel
+				? {
+					tileX: lastPixel.tileX,
+					tileY: lastPixel.tileY,
+					x: lastPixel.x,
+					y: lastPixel.y,
+					paintedAt: lastPixel.paintedAt.toISOString()
+				}
+				: null
 		};
 	}
 
@@ -383,14 +488,11 @@ export class UserService {
 					url: pictureUrl
 				}
 			});
-			// -20k bitcoin
+
 			await tx.user.update({
 				where: { id: userId },
 				data: {
-					picture: pictureUrl,
-					droplets: {
-						decrement: 20_000
-					}
+					picture: pictureUrl
 				}
 			});
 

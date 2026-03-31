@@ -60,7 +60,7 @@ const userService = new UserService(prisma);
 const upload = multer({
 	storage: multer.memoryStorage(),
 	limits: {
-		fileSize: 2 * 1024 * 1024 // 2 MB - consistent limit
+		fileSize: 10 * 1024 * 1024 // 10 MB
 	},
 	fileFilter: (_req, file, cb) => {
 		// Validate MIME type (primary validation)
@@ -88,9 +88,40 @@ const upload = multer({
 	}
 });
 
-const useMulterSingle = (field: string) => (req: any, res: any, next?: any) => (upload.single(field) as any)(req as any, res as any, next as any);
+const useMulterSingle = (field: string) => (req: any, res: any, next?: any) => {
+	(upload.single(field) as any)(req as any, res as any, (error?: Error & { code?: string }) => {
+		if (!error) {
+			next?.();
+			return;
+		}
+
+		if (error.code === "LIMIT_FILE_SIZE") {
+			res.status(HTTP_STATUS.BAD_REQUEST)
+				.json(createErrorResponse("Image file too large (max 10MB)", HTTP_STATUS.BAD_REQUEST));
+			return;
+		}
+
+		res.status(HTTP_STATUS.BAD_REQUEST)
+			.json(createErrorResponse(error.message || "Could not upload image", HTTP_STATUS.BAD_REQUEST));
+	});
+};
 
 export default function (app: App) {
+	app.get("/users/:id/public", async (req, res) => {
+		try {
+			const userId = Number.parseInt(req.params["id"] as string, 10);
+			if (!Number.isFinite(userId) || userId <= 0) {
+				return res.status(HTTP_STATUS.BAD_REQUEST)
+					.json(createErrorResponse("Invalid user ID", HTTP_STATUS.BAD_REQUEST));
+			}
+
+			const result = await userService.getPublicProfile(userId);
+			return res.json(result);
+		} catch (error) {
+			return handleServiceError(error as Error, res);
+		}
+	});
+
 	app.get("/me", authMiddleware, async (req: AuthenticatedRequest, res) => {
 		try {
 			const result = await userService.getUserProfile(req.user!.id);
@@ -151,30 +182,14 @@ export default function (app: App) {
 
 	app.post("/me/profile-picture", authMiddleware, useMulterSingle("image"), async (req: AuthenticatedRequest, res) => {
 		try {
-			// Check user droplets before processing
-			const user = await prisma.user.findUnique({
-				where: { id: req.user!.id },
-				select: { droplets: true }
-			});
-
-			if (!user) {
-				return res.status(HTTP_STATUS.NOT_FOUND)
-					.json(createErrorResponse("User not found", HTTP_STATUS.NOT_FOUND));
-			}
-
-			if (user.droplets < 20_000) {
-				return res.status(HTTP_STATUS.BAD_REQUEST)
-					.json(createErrorResponse("You do not have enough droplets.", HTTP_STATUS.FORBIDDEN));
-			}
-
 			// Handle file upload
 			if ((req as any).file) {
 				const file = (req as any).file;
 
 				// Additional file size check (redundant but safe)
-				if (file.size > 2 * 1024 * 1024) {
+				if (file.size > 10 * 1024 * 1024) {
 					return res.status(HTTP_STATUS.BAD_REQUEST)
-						.json(createErrorResponse("Image file too large (max 2MB)", HTTP_STATUS.BAD_REQUEST));
+						.json(createErrorResponse("Image file too large (max 10MB)", HTTP_STATUS.BAD_REQUEST));
 				}
 
 				// Validate file content - check magic bytes

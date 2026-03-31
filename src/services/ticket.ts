@@ -29,7 +29,7 @@ export class TicketService {
 		const canvas = createCanvas(image.width, image.height);
 		const ctx = canvas.getContext("2d");
 		ctx.drawImage(image, 0, 0);
-		const buffer = canvas.toBuffer("image/jpeg");
+		const buffer = Uint8Array.from(canvas.toBuffer("image/jpeg"));
 
 		return await this.prisma.ticket.create({
 			data: {

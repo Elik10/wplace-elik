@@ -62,6 +62,7 @@ function calculateLevel(pixelsPainted: number): number {
 }
 
 export const TILE_SIZE = 1000;
+const DEFAULT_PROFILE_PICTURE = "/img/gplace-logo.png";
 
 const BAN_ON_BANNED_IP = process.env["BAN_ON_BANNED_IP"] === "1";
 
@@ -159,7 +160,7 @@ export class PixelService {
 						allianceId: pixel.user.allianceId || 0,
 						allianceName: pixel.user.alliance?.name || "",
 						equippedFlag: pixel.user.equippedFlag,
-						picture: pixel.user.picture,
+						picture: pixel.user.picture || DEFAULT_PROFILE_PICTURE,
 						discord: pixel.user.discord,
 						discordUserId: pixel.user.discordUserId,
 						verified: pixel.user.verified,
@@ -211,7 +212,7 @@ export class PixelService {
 							allianceId: pixel.user.allianceId || 0,
 							allianceName: pixel.user.alliance?.name || "",
 							equippedFlag: pixel.user.equippedFlag,
-							picture: pixel.user.picture,
+							picture: pixel.user.picture || DEFAULT_PROFILE_PICTURE,
 							discord: pixel.user.discord,
 							discordUserId: pixel.user.discordUserId
 						});

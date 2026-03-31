@@ -1,8 +1,18 @@
 # gplace
 
-![gplace banner](banner.png)
+<p align="center">
+  <img src="gplace-logo.png" alt="gplace logo" width="144">
+</p>
 
-`gplace` is a self-hosted multiplayer pixel map based on the openplace codebase and customized for a direct username/password flow.
+<p align="center">
+  <img src="gplace-banner.png" alt="gplace banner">
+</p>
+
+<p align="center">
+  <strong>gplace, the better wplace.</strong>
+</p>
+
+`gplace` is a self-hosted multiplayer pixel map built for direct username/password auth, simple branding control, and fast local setup.
 
 ## What You Get
 

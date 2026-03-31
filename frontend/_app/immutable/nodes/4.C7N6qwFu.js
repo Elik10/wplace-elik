@@ -964,9 +964,9 @@ const Qb = () => "Register",
   G4 = () => "Líder de Comunidade",
   $4 = (_ = {}, o = {}) => ((o.locale ?? ze()) === "en" ? Z4() : G4()),
   H4 = () =>
-    "Your name is how other users will see you in Wplace. It can be changed every 60 days.",
+    "Your name is how other users will see you in gplace. It can be changed every 60 days.",
   W4 = () =>
-    "Seu nome é como outros usuários o verão no Wplace. Você pode alterá-lo a cada 60 dias.",
+    "Seu nome é como outros usuários o verão no gplace. Você pode alterá-lo a cada 60 dias.",
   X4 = (_ = {}, o = {}) => ((o.locale ?? ze()) === "en" ? H4() : W4()),
   Y4 = () => "Twitch account migrated successfully.",
   K4 = () => "Conta da Twitch migrada com sucesso.",
@@ -55109,7 +55109,8 @@ function wk(_, o) {
     B = M(s, !0);
   P(s);
   var N = q(s, 2);
-  f_(N, { hasText: !0, size: "medium" }), P(T), P(L);
+  f_(N, { hasText: !0, size: "medium" });
+  P(T), P(L);
   var K = q(L, 2),
     ee = M(K);
   P_(ee, {}), P(K);
@@ -55288,7 +55289,7 @@ function jk(_, o) {
       var re = Ok(),
         ue = M(re),
         ne = M(ue);
-      f_(ne, { hasText: !0, size: "medium" });
+      f_(ne, { size: "medium", hasText: !0 });
       var Y = q(ne, 2),
         xe = M(Y),
         Ie = q(xe, 4);
@@ -59794,7 +59795,7 @@ function Tz(_, o) {
                                 le(Nt, y(Wt).flag),
                                 Br(jt, 1, `font-semibold ${Te ?? ""}`),
                                 le(mr, `${y(Tt).name ?? ""} `),
-                                le(vr, `#${y(Tt).number ?? ""}`),
+                                le(vr, y(Tt).id === 0 || !y(Tt).number ? "" : `#${y(Tt).number}`),
                                 le(pr, O),
                                 le(Sr, E);
                             },
@@ -64043,6 +64044,31 @@ function e7(_, o) {
     tileZoom: o.tileZoom,
     beforeLayerId: o.hoverLayerId,
   });
+  globalThis.gplaceMap = o.map;
+  globalThis.map = o.map;
+  globalThis.gplaceNavigateCoordinates = (zt) => {
+    if (!zt || typeof zt.lat != "number" || typeof zt.lng != "number") return;
+    const fr = { lat: zt.lat, lng: zt.lng };
+    as(fr, zt.zoom ?? o.map.getZoom()), o.map.flyTo({
+      center: fr,
+      zoom: zt.zoom ?? o.map.getZoom(),
+      duration: 700,
+      essential: !0,
+    });
+  };
+  globalThis.gplaceNavigateCoordinatesEventHandler &&
+    window.removeEventListener(
+      "gplace:navigate-coordinates",
+      globalThis.gplaceNavigateCoordinatesEventHandler
+    );
+  globalThis.gplaceNavigateCoordinatesEventHandler = (zt) => {
+    var fr;
+    (fr = zt.detail) != null && globalThis.gplaceNavigateCoordinates(fr);
+  };
+  window.addEventListener(
+    "gplace:navigate-coordinates",
+    globalThis.gplaceNavigateCoordinatesEventHandler
+  );
   $r(() => {
     const zt = x() ? 1 : 0;
     Ve.setCanvasOpacity(zt);
@@ -68889,7 +68915,9 @@ function IF(_, o) {
       });
       var nt = q(Le, 2);
       nt.__click = () => {
-        te(f, !0);
+        typeof window.gplaceOpenProfileModal == "function"
+          ? window.gplaceOpenProfileModal()
+          : te(f, !0);
       };
       var dt = M(nt);
       zm(dt, { class: "size-4" }), P(nt), P($e);
@@ -69965,7 +69993,7 @@ function VF(_, o) {
           gr(s, "data-tip", y(x).name),
           le(B, y(x).flag),
           le(K, o.region.name),
-          le(re, `#${o.region.number ?? ""}`);
+          le(re, o.region.id === 0 || !o.region.number ? "" : `#${o.region.number}`);
       },
       [() => Ni(o.region.cityId)]
     ),

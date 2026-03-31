@@ -9,10 +9,8 @@
 						:to="returnTo"
 						class="logo">
 						<img
-							src="/img/logo-512x512.png"
-							alt=""
-							width="64"
-							height="64"
+							src="/img/gplace-banner.png"
+							alt="gplace"
 						>
 					</RouterLink>
 				</template>
@@ -155,8 +153,9 @@ const canvasTick = () => {
 }
 
 .logo img {
-	width: 3.15rem;
-	height: 3.15rem;
+	width: min(100%, 14rem);
+	height: auto;
+	image-rendering: pixelated;
 }
 
 :deep(.form) {

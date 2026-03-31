@@ -1,7 +1,6 @@
 import { App } from "@tinyhttp/app";
 import crypto from "crypto";
-import fs from "fs/promises";
-import { authMiddleware, optionalAuthMiddleware } from "../middleware/auth.js";
+import { authMiddleware } from "../middleware/auth.js";
 import { handleServiceError } from "../middleware/errorHandler.js";
 import DiscordService from "../services/discord.js";
 import { createErrorResponse, HTTP_STATUS } from "../utils/response.js";
@@ -91,14 +90,14 @@ export default function (app: App) {
 			const discordUser = await discordService.getDiscordUser(accessToken);
 			await discordService.linkDiscordAccount(stateData.userId, discordUser);
 			await discordBot.updateUserId(discordUser.id);
-			res.redirect("/login/discord");
+			return res.redirect("/login/discord");
 		} catch (error) {
 			console.error("Discord callback error:", error);
 
 			const params = new URLSearchParams([
 				["error", (error as Error).message || "Failed to link Discord account"]
 			]);
-			res.redirect(`/login/discord?${params.toString()}`);
+			return res.redirect(`/login/discord?${params.toString()}`);
 		}
 	});
 

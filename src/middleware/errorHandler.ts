@@ -4,7 +4,9 @@ import { ValidationError } from "../utils/error.js";
 
 // TODO: I don’t like this function
 export function handleServiceError(error: Error, res: Response) {
-	console.error("Service error:", error);
+	if (!["No Alliance", "Forbidden"].includes(error.message)) {
+		console.error("Service error:", error);
+	}
 
 	if (error instanceof ValidationError) {
 		return res.status(HTTP_STATUS.BAD_REQUEST)

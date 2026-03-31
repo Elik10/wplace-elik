@@ -1,0 +1,5 @@
+#gplace-player-hub,
+#gplace-player-panel,
+[data-gplace-profile-extra] {
+	display: none !important;
+}

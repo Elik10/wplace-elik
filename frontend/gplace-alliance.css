@@ -1,0 +1,731 @@
+.gplace-alliance-lock {
+	overflow: hidden;
+}
+
+#gplace-alliance-panel[hidden] {
+	display: none;
+}
+
+#gplace-alliance-panel {
+	position: fixed;
+	inset: 0;
+	z-index: 9997;
+}
+
+#gplace-alliance-panel .gpa-overlay {
+	position: absolute;
+	inset: 0;
+}
+
+#gplace-alliance-panel .gpa-backdrop {
+	position: absolute;
+	inset: 0;
+	border: 0;
+	background: rgba(10, 15, 28, 0.38);
+	backdrop-filter: blur(4px);
+	cursor: pointer;
+	opacity: 0;
+}
+
+#gplace-alliance-panel .gpa-dialog {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: min(960px, calc(100vw - 28px));
+	max-height: min(88vh, 920px);
+	overflow: hidden;
+	border: 1px solid rgba(148, 163, 184, 0.24);
+	border-radius: 28px;
+	background: #f8fbff;
+	box-shadow: 0 28px 80px rgba(15, 23, 42, 0.2);
+	transform: translate(-50%, -50%) scale(0.96);
+	opacity: 0;
+	display: grid;
+	grid-template-rows: auto minmax(0, 1fr);
+}
+
+#gplace-alliance-panel[data-state="opening"] .gpa-backdrop {
+	animation: gpa-backdrop-in 180ms ease forwards;
+}
+
+#gplace-alliance-panel[data-state="opening"] .gpa-dialog {
+	animation: gpa-dialog-in 220ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+#gplace-alliance-panel[data-state="open"] .gpa-backdrop {
+	opacity: 1;
+}
+
+#gplace-alliance-panel[data-state="open"] .gpa-dialog {
+	opacity: 1;
+	transform: translate(-50%, -50%) scale(1);
+}
+
+#gplace-alliance-panel[data-state="closing"] .gpa-backdrop {
+	animation: gpa-backdrop-out 150ms ease forwards;
+}
+
+#gplace-alliance-panel[data-state="closing"] .gpa-dialog {
+	animation: gpa-dialog-out 150ms ease forwards;
+}
+
+@keyframes gpa-backdrop-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes gpa-backdrop-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes gpa-dialog-in {
+	from {
+		opacity: 0;
+		transform: translate(-50%, calc(-50% + 14px)) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+@keyframes gpa-dialog-out {
+	from {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: translate(-50%, calc(-50% + 10px)) scale(0.98);
+	}
+}
+
+#gplace-alliance-panel .gpa-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 22px 24px 18px;
+	border-bottom: 1px solid #e6edf7;
+	background: rgba(255, 255, 255, 0.92);
+}
+
+#gplace-alliance-panel .gpa-eyebrow {
+	margin: 0 0 6px;
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: #6680a6;
+}
+
+#gplace-alliance-panel .gpa-header h2 {
+	margin: 0;
+	font-size: clamp(24px, 4vw, 34px);
+	line-height: 1;
+	color: #102846;
+}
+
+#gplace-alliance-panel .gpa-close {
+	display: inline-grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	border: 0;
+	border-radius: 999px;
+	background: #edf3ff;
+	color: #58729a;
+	cursor: pointer;
+	transition: background 140ms ease, transform 140ms ease;
+}
+
+#gplace-alliance-panel .gpa-close:hover {
+	background: #e3ebfb;
+	transform: translateY(-1px);
+}
+
+#gplace-alliance-panel .gpa-content {
+	min-height: 0;
+	overflow: auto;
+	padding: 22px 24px 24px;
+}
+
+#gplace-alliance-panel .gpa-tab-panel.is-animating {
+	animation: gpa-tab-fade 220ms ease;
+}
+
+#gplace-alliance-panel .gpa-content::-webkit-scrollbar {
+	width: 10px;
+}
+
+#gplace-alliance-panel .gpa-content::-webkit-scrollbar-thumb {
+	border: 3px solid transparent;
+	border-radius: 999px;
+	background: rgba(77, 111, 177, 0.28);
+	background-clip: padding-box;
+}
+
+#gplace-alliance-panel .gpa-notice {
+	margin-bottom: 18px;
+	border-radius: 18px;
+	padding: 13px 15px;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+#gplace-alliance-panel .gpa-notice.is-info {
+	background: #eaf3ff;
+	color: #30558a;
+}
+
+#gplace-alliance-panel .gpa-notice.is-error {
+	background: #fff0f3;
+	color: #bf3a58;
+}
+
+#gplace-alliance-panel .gpa-notice.is-success {
+	background: #edf9f1;
+	color: #267050;
+}
+
+#gplace-alliance-panel .gpa-loading {
+	display: grid;
+	place-items: center;
+	min-height: 320px;
+}
+
+#gplace-alliance-panel .gpa-spinner {
+	width: 42px;
+	height: 42px;
+	border: 4px solid #dce7fb;
+	border-top-color: #4169e1;
+	border-radius: 999px;
+	animation: gpa-spin 0.8s linear infinite;
+}
+
+@keyframes gpa-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes gpa-tab-fade {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+#gplace-alliance-panel .gpa-empty,
+#gplace-alliance-panel .gpa-create {
+	display: grid;
+	gap: 18px;
+}
+
+#gplace-alliance-panel .gpa-card {
+	border: 1px solid #e3ebf7;
+	border-radius: 24px;
+	background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+	padding: 22px;
+}
+
+#gplace-alliance-panel .gpa-card h3,
+#gplace-alliance-panel .gpa-card h4 {
+	margin: 0 0 10px;
+	color: #17315a;
+}
+
+#gplace-alliance-panel .gpa-card p {
+	margin: 0;
+	color: #61748e;
+	line-height: 1.6;
+}
+
+#gplace-alliance-panel .gpa-owner-exit {
+	display: grid;
+	gap: 12px;
+	margin-top: 18px;
+	border-top: 1px solid #e8eef6;
+	padding-top: 18px;
+}
+
+#gplace-alliance-panel .gpa-cta-buttons,
+#gplace-alliance-panel .gpa-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 18px;
+}
+
+#gplace-alliance-panel .gpa-button,
+#gplace-alliance-panel .gpa-link-button,
+#gplace-alliance-panel .gpa-role-form button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 44px;
+	border: 0;
+	border-radius: 999px;
+	padding: 0 18px;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+	text-decoration: none;
+	transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+#gplace-alliance-panel .gpa-button:hover,
+#gplace-alliance-panel .gpa-link-button:hover,
+#gplace-alliance-panel .gpa-role-form button:hover {
+	transform: translateY(-1px);
+}
+
+#gplace-alliance-panel .gpa-button.is-primary,
+#gplace-alliance-panel .gpa-link-button.is-primary {
+	background: linear-gradient(180deg, #4c78ef 0%, #325fd9 100%);
+	box-shadow: 0 14px 28px rgba(65, 105, 225, 0.22);
+	color: #fff;
+}
+
+#gplace-alliance-panel .gpa-button.is-secondary,
+#gplace-alliance-panel .gpa-link-button.is-secondary,
+#gplace-alliance-panel .gpa-role-form button,
+#gplace-alliance-panel .gpa-tab {
+	background: #edf3ff;
+	color: #34537f;
+}
+
+#gplace-alliance-panel .gpa-button.is-danger {
+	background: #fff1f4;
+	color: #ca415f;
+}
+
+#gplace-alliance-panel .gpa-button[disabled],
+#gplace-alliance-panel .gpa-role-form button[disabled] {
+	cursor: wait;
+	opacity: 0.65;
+	transform: none;
+}
+
+#gplace-alliance-panel .gpa-form {
+	display: grid;
+	gap: 14px;
+}
+
+#gplace-alliance-panel .gpa-form-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+}
+
+#gplace-alliance-panel .gpa-field {
+	display: grid;
+	gap: 7px;
+}
+
+#gplace-alliance-panel .gpa-field--full {
+	grid-column: 1 / -1;
+}
+
+#gplace-alliance-panel .gpa-label {
+	font-size: 13px;
+	font-weight: 700;
+	color: #5c7191;
+}
+
+#gplace-alliance-panel .gpa-input,
+#gplace-alliance-panel .gpa-textarea,
+#gplace-alliance-panel .gpa-select {
+	width: 100%;
+	border: 1px solid #d7e2f2;
+	border-radius: 16px;
+	background: #fff;
+	padding: 13px 15px;
+	box-sizing: border-box;
+	color: #1e3658;
+	font: inherit;
+	outline: none;
+	transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+#gplace-alliance-panel .gpa-textarea {
+	min-height: 118px;
+	resize: vertical;
+}
+
+#gplace-alliance-panel .gpa-input:focus,
+#gplace-alliance-panel .gpa-textarea:focus,
+#gplace-alliance-panel .gpa-select:focus {
+	border-color: #4d78ef;
+	box-shadow: 0 0 0 4px rgba(77, 120, 239, 0.12);
+}
+
+#gplace-alliance-panel .gpa-help {
+	font-size: 13px;
+	color: #7a8ca8;
+	line-height: 1.5;
+}
+
+#gplace-alliance-panel .gpa-hero {
+	position: relative;
+	overflow: hidden;
+	border-radius: 26px;
+	padding: 24px;
+	background:
+		linear-gradient(135deg, rgba(30, 58, 138, 0.92), rgba(65, 105, 225, 0.86)),
+		#315fd9;
+	color: #fff;
+}
+
+#gplace-alliance-panel .gpa-hero.has-banner {
+	background-size: cover;
+	background-position: center;
+}
+
+#gplace-alliance-panel .gpa-hero::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, rgba(6, 11, 24, 0.08) 0%, rgba(6, 11, 24, 0.45) 100%);
+}
+
+#gplace-alliance-panel .gpa-hero__inner {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: flex-end;
+	gap: 18px;
+}
+
+#gplace-alliance-panel .gpa-alliance-avatar {
+	flex: 0 0 auto;
+	width: 84px;
+	height: 84px;
+	border-radius: 24px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.26);
+	background: rgba(255, 255, 255, 0.18);
+	display: grid;
+	place-items: center;
+	font-size: 28px;
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+#gplace-alliance-panel .gpa-alliance-avatar img,
+#gplace-alliance-panel .gpa-member-avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+#gplace-alliance-panel .gpa-hero h3 {
+	margin: 8px 0 6px;
+	font-size: clamp(28px, 5vw, 42px);
+	line-height: 1;
+}
+
+#gplace-alliance-panel .gpa-hero p {
+	margin: 0;
+	max-width: 58ch;
+	color: rgba(255, 255, 255, 0.88);
+	line-height: 1.6;
+}
+
+#gplace-alliance-panel .gpa-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+#gplace-alliance-panel .gpa-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 999px;
+	padding: 7px 12px;
+	background: rgba(255, 255, 255, 0.16);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+#gplace-alliance-panel .gpa-pill.is-light {
+	background: #eef3ff;
+	color: #355587;
+}
+
+#gplace-alliance-panel .gpa-stats {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	margin-top: 16px;
+}
+
+#gplace-alliance-panel .gpa-stat {
+	border: 1px solid #e0e9f7;
+	border-radius: 20px;
+	background: #fff;
+	padding: 16px;
+}
+
+#gplace-alliance-panel .gpa-stat span {
+	display: block;
+	font-size: 13px;
+	color: #7386a3;
+}
+
+#gplace-alliance-panel .gpa-stat strong {
+	display: block;
+	margin-top: 6px;
+	font-size: 24px;
+	color: #17315a;
+}
+
+#gplace-alliance-panel .gpa-tabs {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 18px 0;
+	padding: 6px;
+	border-radius: 18px;
+	background: #edf3ff;
+}
+
+#gplace-alliance-panel .gpa-tabs--inline {
+	margin-top: 18px;
+}
+
+#gplace-alliance-panel .gpa-tab.is-active {
+	background: #4169e1;
+	box-shadow: 0 12px 22px rgba(65, 105, 225, 0.18);
+	color: #fff;
+}
+
+#gplace-alliance-panel .gpa-section-grid {
+	display: grid;
+	grid-template-columns: 1.25fr 0.95fr;
+	gap: 16px;
+}
+
+#gplace-alliance-panel .gpa-members {
+	display: grid;
+	gap: 12px;
+}
+
+#gplace-alliance-panel .gpa-list-toolbar {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 12px;
+	margin-bottom: 14px;
+}
+
+#gplace-alliance-panel .gpa-member {
+	display: grid;
+	grid-template-columns: auto auto minmax(0, 1fr) auto;
+	gap: 14px;
+	align-items: center;
+	border: 1px solid #e3ebf7;
+	border-radius: 22px;
+	background: #fff;
+	padding: 14px;
+}
+
+#gplace-alliance-panel .gpa-rank {
+	display: inline-grid;
+	place-items: center;
+	min-width: 48px;
+	height: 42px;
+	border-radius: 14px;
+	background: #edf3ff;
+	color: #355587;
+	font-weight: 800;
+}
+
+#gplace-alliance-panel .gpa-member-avatar {
+	width: 46px;
+	height: 46px;
+	border-radius: 16px;
+	overflow: hidden;
+	display: grid;
+	place-items: center;
+	background: #edf3ff;
+	color: #355587;
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+#gplace-alliance-panel .gpa-member h4 {
+	margin: 0;
+	color: #17315a;
+}
+
+#gplace-alliance-panel .gpa-member p {
+	margin: 4px 0 0;
+	color: #7386a3;
+	font-size: 13px;
+}
+
+#gplace-alliance-panel .gpa-member-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+#gplace-alliance-panel .gpa-member-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+#gplace-alliance-panel .gpa-log-list {
+	display: grid;
+	gap: 12px;
+}
+
+#gplace-alliance-panel .gpa-log-item {
+	border: 1px solid #e3ebf7;
+	border-radius: 20px;
+	background: #fff;
+	padding: 16px;
+}
+
+#gplace-alliance-panel .gpa-log-item__time {
+	margin-bottom: 6px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #7386a3;
+}
+
+#gplace-alliance-panel .gpa-log-item__body {
+	color: #17315a;
+	line-height: 1.6;
+}
+
+#gplace-alliance-panel .gpa-permissions {
+	display: grid;
+	grid-template-columns: minmax(180px, 1.4fr) repeat(3, minmax(88px, 0.6fr));
+	gap: 10px;
+	align-items: center;
+}
+
+#gplace-alliance-panel .gpa-permissions__head {
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #7084a3;
+}
+
+#gplace-alliance-panel .gpa-permissions__label {
+	color: #17315a;
+	font-weight: 600;
+}
+
+#gplace-alliance-panel .gpa-permissions__cell {
+	display: grid;
+	place-items: center;
+	min-height: 44px;
+	border: 1px solid #e3ebf7;
+	border-radius: 16px;
+	background: #fff;
+}
+
+#gplace-alliance-panel .gpa-permissions__cell input {
+	width: 18px;
+	height: 18px;
+}
+
+#gplace-alliance-panel .gpa-role-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+#gplace-alliance-panel .gpa-role-form .gpa-select {
+	min-width: 120px;
+	padding-right: 34px;
+}
+
+#gplace-alliance-panel .gpa-load-more {
+	margin-top: 12px;
+}
+
+#gplace-alliance-panel .gpa-source {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 14px;
+	font-size: 13px;
+	color: #6a7f9e;
+}
+
+#gplace-alliance-panel .gpa-source a {
+	color: #3760a7;
+}
+
+@media (max-width: 860px) {
+	#gplace-alliance-panel .gpa-section-grid {
+		grid-template-columns: 1fr;
+	}
+
+	#gplace-alliance-panel .gpa-stats {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 640px) {
+	#gplace-alliance-panel .gpa-dialog {
+		width: min(100vw - 14px, 960px);
+		max-height: min(94vh, 920px);
+		border-radius: 24px;
+	}
+
+	#gplace-alliance-panel .gpa-header {
+		padding: 18px 18px 15px;
+	}
+
+	#gplace-alliance-panel .gpa-content {
+		padding: 18px;
+	}
+
+	#gplace-alliance-panel .gpa-form-grid,
+	#gplace-alliance-panel .gpa-list-toolbar,
+	#gplace-alliance-panel .gpa-member {
+		grid-template-columns: 1fr;
+	}
+
+	#gplace-alliance-panel .gpa-permissions {
+		grid-template-columns: 1fr;
+	}
+
+	#gplace-alliance-panel .gpa-hero__inner {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	#gplace-alliance-panel .gpa-member-actions {
+		justify-content: flex-start;
+	}
+}

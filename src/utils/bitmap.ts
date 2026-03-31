@@ -57,7 +57,7 @@ export class WplaceBitMap implements BitMap {
 			const len = binaryString.length;
 			const bytes = new Uint8Array(len);
 			for (let i = 0; i < len; i++) {
-				bytes[i] = binaryString.codePointAt(i);
+				bytes[i] = binaryString.codePointAt(i) ?? 0;
 			}
 			return new WplaceBitMap(bytes);
 		} else {
